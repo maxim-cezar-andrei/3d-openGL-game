@@ -7,9 +7,9 @@
 #include <iostream>
 #include "Shader.h"
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw.h"
+#include "imgui/imgui_impl_opengl3.h"
 
 using namespace std;
 
@@ -20,10 +20,33 @@ enum GameState
 	STATE_GAME_OVER
 };
 
+enum TipObiect
+{
+	SAFE, 
+	UNSAFE
+};
+
+struct Obiect
+{
+	glm::vec3 pozitie;
+	TipObiect tip;
+};
+
 GameState currentState = STATE_MAIN_MENU;
 
+bool spaceAcum = false;
+bool spaceInainte = false;
+
+bool peSuprafata = true;
+
 float playerX = 0.0f;
+float playerY = 0.0f;
 float playerZ = 0.0f;
+
+float velocityY = 0.0f;
+float gravitate = 0.01f;
+float nivelPodea = -0.45f;
+
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
@@ -33,15 +56,11 @@ float pitch = 0.0f;
 float lastX = 400.0f; // Centrul ecranului pe X
 float lastY = 300.0f; // Centrul ecranului pe Y
 
-glm::vec3 hartaObstacole[] = {
-	glm::vec3(0.0f, 0.05f,  -20.0f), // Pe mijloc
-	glm::vec3(-1.5f, 0.05f,  -40.0f), // Pe stânga
-	glm::vec3(1.5f, 0.05f,  -60.0f), // Pe dreapta
-	glm::vec3(0.0f, 0.05f,  -80.0f), // Pe mijloc
-	glm::vec3(-1.5f, 0.05f, -100.0f), // Pe stânga
-	glm::vec3(1.5f, 0.05f, -120.0f)  // Pe dreapta
+Obiect obiecte[2] = {
+	{glm::vec3(5.0f, 0.05f, -20.0f), SAFE},
+	 {glm::vec3(-7.5f, 0.05f, -40.0f), UNSAFE}
 };
-int nrObstacole = 6;
+int nrObstacole = 2;
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
@@ -183,6 +202,8 @@ int main()
 	{
 		processInput(window);
 
+		spaceAcum = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
+
 		if (currentState == STATE_GAME_OVER)
 		{
 			glClearColor(0.8f, 0.1f, 0.1f, 1.0f);
@@ -201,7 +222,7 @@ int main()
 
 		//CAMERA
 		glm::mat4 view = glm::mat4(1.0f);
-		glm::vec3 pozitieOchi = glm::vec3(playerX, 1.0f, playerZ);
+		glm::vec3 pozitieOchi = glm::vec3(playerX, playerY + 1.0f, playerZ);
 		glm::vec3 directiaSus = glm::vec3(0.0f, 1.0f, 0.0f);
 		view = glm::lookAt(pozitieOchi, pozitieOchi + cameraFront, directiaSus);
 		glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
@@ -215,19 +236,28 @@ int main()
 		if (currentState == STATE_PLAYING)
 		{
 			float vitezaMiscarii = 0.05f;
+			velocityY -= gravitate;
+			playerY += velocityY;
+
+			if (playerY <= nivelPodea)
+			{
+				velocityY = 0.0f;
+				playerY = nivelPodea;
+				peSuprafata = true;
+			}
 			//MISCAREA CARACTERULUI
-			glm::vec3 frontPlat = glm::normalize(glm::vec3(cameraFront.x, 0.0f, cameraFront.z));
-			glm::vec3 dreapta = glm::normalize(glm::cross(frontPlat, cameraUp));
+			glm::vec3 inainte = glm::normalize(glm::vec3(cameraFront.x, 0.0f, cameraFront.z));
+			glm::vec3 dreapta = glm::normalize(glm::cross(inainte, cameraUp));
 
 			if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 			{
-				playerX += frontPlat.x * vitezaMiscarii;
-				playerZ += frontPlat.z * vitezaMiscarii;
+				playerX += inainte.x * vitezaMiscarii;
+				playerZ += inainte.z * vitezaMiscarii;
 			}
 			if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 			{
-				playerX -= frontPlat.x * vitezaMiscarii;
-				playerZ -= frontPlat.z * vitezaMiscarii;
+				playerX -= inainte.x * vitezaMiscarii;
+				playerZ -= inainte.z * vitezaMiscarii;
 			}
 			if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 			{
@@ -240,17 +270,64 @@ int main()
 				playerZ += dreapta.z * vitezaMiscarii;
 			}
 
-			// Limite mișcare caracter pe drum (presupunând că ai lăsat limita la 30)
+			// Limite mișcare caracter pe drum
 			if (playerX < -24.0f)
 				playerX = -24.0f;
 			if (playerX > 24.0f)
 				playerX = 24.0f;
 
+			if (playerZ > 0.0f)
+				playerZ = 0.0f;
+			if (playerZ < -1000.0f)
+				playerZ = -1000.0f;
+
+			peSuprafata = false;
+
 			for (int i = 0; i < nrObstacole; i++) 
 			{
-				if (abs(playerX - hartaObstacole[i].x) < 1.0f && abs(playerZ - hartaObstacole[i].z) < 1.0f) 
+				float ox = obiecte[i].pozitie.x;
+				float oy = obiecte[i].pozitie.y;
+				float oz = obiecte[i].pozitie.z;
+
+				bool colX = abs(playerX - ox) < 1.0f;
+				bool colY = playerY < oy + 0.5f && playerY > oy - 1.5f;
+				bool colZ = abs(playerZ - oz) < 1.0f;
+
+				if (colX && colZ && colY)
 				{
-					currentState = STATE_GAME_OVER;
+					if (obiecte[i].tip == UNSAFE)
+						currentState = STATE_GAME_OVER;
+					else if (obiecte[i].tip == SAFE)
+					{
+						if (velocityY < 0.0f && playerY >= oy)
+						{
+							peSuprafata = true;
+							playerY = oy + 0.5f;
+							velocityY = 0.0f;
+						}
+						else if (velocityY > 0.0f && playerY < oy)
+						{
+							playerY = oy - 1.5f;
+							velocityY = 0.0f;
+						}
+						else
+						{
+							float pX = 1.0f - abs(playerX - ox);
+							float pZ = 1.0f - abs(playerZ - oz);
+							if (pX < pZ)
+								playerX = ox + (playerX > ox ? 1.0f : -1.0f);
+							else
+								playerZ = oz + (playerZ > oz ? 1.0f : -1.0f);
+						}
+					}
+				}
+			}
+
+			if (spaceAcum && !spaceInainte)
+			{
+				if (playerY <= nivelPodea || peSuprafata)
+				{
+					velocityY = 0.5f;
 				}
 			}
 
@@ -262,18 +339,22 @@ int main()
 			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelDrum));
 			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 
-			glUniform3f(colorLoc, 0.9f, 0.1f, 0.1f); // Culoare Roșie pentru pericol
+			
 			for (int i = 0; i < nrObstacole; i++) 
 			{
+				if (obiecte[i].tip == UNSAFE)
+					glUniform3f(colorLoc, 0.9f, 0.1f, 0.1f);
+				else
+					glUniform3f(colorLoc, 0.0f, 1.0f, 0.1f);
 				glm::mat4 modelObstacol = glm::mat4(1.0f);
 				// Aici folosim coordonatele din harta ta de sus!
-				modelObstacol = glm::translate(modelObstacol, hartaObstacole[i]);
+				modelObstacol = glm::translate(modelObstacol, obiecte[i].pozitie);
 				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelObstacol));
 				glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 			}
 		}
 
-		// --- LOGICA DE DESENARE A MENIURILOR IMGUI (AȘA CUM AI CERUT) ---
+		//MENIU---
 
 		// 1. Definim stilul fontului (pentru textul mare central)
 		int wWidth, wHeight;
@@ -310,11 +391,13 @@ int main()
 			ImGui::End();
 
 			// Ieșirea din Meniu: Apăsăm SPACE să jucăm
-			if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS) 
+			if (spaceAcum && !spaceInainte) 
 			{
 				currentState = STATE_PLAYING;
 				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 				playerX = 0.0f;
+				playerY = nivelPodea;
+				velocityY = 0.0f;
 				playerZ = 0.0f;
 			}
 		}
@@ -348,6 +431,8 @@ int main()
 			if (ImGui::Button("RUN AGAIN", ImVec2(btnWidth, 60))) {
 				currentState = STATE_PLAYING; // Restart instant
 				playerX = 0.0f;
+				playerY = nivelPodea;
+				velocityY = 0.0f;
 				playerZ = 0.0f;
 			}
 
@@ -360,6 +445,8 @@ int main()
 				currentState = STATE_PLAYING;
 				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 				playerX = 0.0f;
+				playerY = nivelPodea;
+				velocityY = 0.0f;
 				playerZ = 0.0f;
 			}
 		}
@@ -368,6 +455,8 @@ int main()
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		spaceInainte = spaceAcum;
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
