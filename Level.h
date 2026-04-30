@@ -3,3 +3,4 @@
 
 extern Obiect obiecte[];
 extern int nrObstacole;
+void updateLevel();

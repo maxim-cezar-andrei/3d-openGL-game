@@ -56,5 +56,6 @@
   <ItemGroup>
     <ClInclude Include="Level.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="Types.h" />
   </ItemGroup>
 </Project>

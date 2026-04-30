@@ -14,9 +14,11 @@ float playerY = 0.0f;
 float playerZ = 0.0f;
 
 float prevPlayerY = 0.0f;
-float velocityY   = 0.0f;
-float gravitate   = 0.01f;
-float nivelPodea  = -0.45f;
+float velocityX = 0.0f;
+float velocityY = 0.0f;
+float velocityZ = 0.0f;
+float gravitate = 0.01f;
+float nivelPodea = -0.45f;
 
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
@@ -69,6 +71,8 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 
 void updatePlayer(GLFWwindow* window)
 {
+	updateLevel();
+
 	float vitezaMiscarii = 0.05f;
 	prevPlayerY = playerY;
 	velocityY -= gravitate;

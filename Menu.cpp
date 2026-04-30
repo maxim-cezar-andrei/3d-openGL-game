@@ -42,7 +42,7 @@ void renderMenus(GLFWwindow* window)
 			playerX   = 0.0f;
 			playerY   = nivelPodea;
 			velocityY = 0.0f;
-			playerZ   = -6.0f;
+			playerZ   = -3.0f;
 		}
 	}
 	else if (currentState == STATE_GAME_OVER)

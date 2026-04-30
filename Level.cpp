@@ -18,10 +18,10 @@ Obiect obiecte[] = {
 	// === ZONA 1: Chicane + obstacole statice (vor fi mobile mai tarziu) ===
 	{glm::vec3(-15.0f, 1.0f, -15.0f), glm::vec3(20.0f, 3.0f, 1.0f), WALL},  // chicane 1 - trecere pe dreapta
 	{glm::vec3( 15.0f, 1.0f, -27.0f), glm::vec3(20.0f, 3.0f, 1.0f), WALL},  // chicane 2 - trecere pe stanga
-	{glm::vec3( -5.0f,  0.5f,  -8.0f), glm::vec3(2.0f, 2.0f, 2.0f), UNSAFE},
-	{glm::vec3(  5.0f,  0.5f, -12.0f), glm::vec3(2.0f, 2.0f, 2.0f), UNSAFE},
-	{glm::vec3( 10.0f,  0.5f, -20.0f), glm::vec3(2.0f, 2.0f, 2.0f), UNSAFE},
-	{glm::vec3(  0.0f,  0.5f, -23.0f), glm::vec3(2.0f, 2.0f, 2.0f), UNSAFE},
+	{glm::vec3( -5.0f,  0.5f,  -8.0f), glm::vec3(2.0f, 2.0f, 2.0f), UNSAFE, 0.1f, -24.5f, 24.5f},
+	{glm::vec3(  5.0f,  0.5f, -12.0f), glm::vec3(2.0f, 2.0f, 2.0f), UNSAFE, 0.03f, -20.0f, 20.0f},
+	{glm::vec3( 10.0f,  0.5f, -20.0f), glm::vec3(2.0f, 2.0f, 2.0f), UNSAFE, 0.03f, -20.0f, 20.0f},
+	{glm::vec3(  0.0f,  0.5f, -23.0f), glm::vec3(2.0f, 2.0f, 2.0f), UNSAFE, 0.03f, -20.0f, 20.0f},
 
 	// === ZONA 2: Piscina ===
 	{glm::vec3(-13.0f, 1.0f, -47.5f), glm::vec3(1.0f, 3.0f, 31.0f), WALL},  // perete stanga
@@ -55,3 +55,19 @@ Obiect obiecte[] = {
 };
 
 int nrObstacole = sizeof(obiecte) / sizeof(obiecte[0]);
+
+void updateLevel()
+{
+	for (int i = 0; i < nrObstacole; i++)
+	{
+		if (obiecte[i].vitezaX == 0.0f) 
+			continue;
+
+		obiecte[i].pozitie.x += obiecte[i].vitezaX;
+
+		if (obiecte[i].pozitie.x > obiecte[i].limitaMax || obiecte[i].pozitie.x < obiecte[i].limitaMin)
+		{
+			obiecte[i].vitezaX = -obiecte[i].vitezaX;
+		}
+	}
+}
