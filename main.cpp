@@ -23,12 +23,16 @@ enum GameState
 enum TipObiect
 {
 	SAFE, 
-	UNSAFE
+	UNSAFE,
+	WALL,
+	FLOOR, 
+	FINISH
 };
 
 struct Obiect
 {
 	glm::vec3 pozitie;
+	glm::vec3 scala;
 	TipObiect tip;
 };
 
@@ -43,6 +47,7 @@ float playerX = 0.0f;
 float playerY = 0.0f;
 float playerZ = 0.0f;
 
+float prevPlayerY = 0.0f;
 float velocityY = 0.0f;
 float gravitate = 0.01f;
 float nivelPodea = -0.45f;
@@ -56,11 +61,59 @@ float pitch = 0.0f;
 float lastX = 400.0f; // Centrul ecranului pe X
 float lastY = 300.0f; // Centrul ecranului pe Y
 
-Obiect obiecte[2] = {
-	{glm::vec3(5.0f, 0.05f, -20.0f), SAFE},
-	 {glm::vec3(-7.5f, 0.05f, -40.0f), UNSAFE}
+Obiect obiecte[] = {
+	// === PERETI EXTERIORI ===
+	  {glm::vec3(-25.5f, 1.0f, -50.0f), glm::vec3(1.0f,  3.0f, 100.0f), WALL}, // nord
+	  {glm::vec3(25.5f, 1.0f, -50.0f), glm::vec3(1.0f,  3.0f, 100.0f), WALL}, // sud
+	  {glm::vec3(0.0f, 1.0f, 0.5f), glm::vec3(50.0f, 3.0f, 1.0f), WALL}, // vest
+	  {glm::vec3(0.0f, 1.0f, -100.5f), glm::vec3(50.0f, 3.0f, 1.0f), WALL}, // est
+
+	  // === PODEA ===
+	  {glm::vec3(0.0f, -0.5f, -16.0f), glm::vec3(50.0f, 0.1f,  32.0f), FLOOR}, // zona 1
+	  {glm::vec3(-19.0f, -0.5f, -47.5f), glm::vec3(12.0f, 0.1f,  31.0f), FLOOR}, // nord de piscina
+	  {glm::vec3(19.0f, -0.5f, -47.5f), glm::vec3(12.0f, 0.1f,  31.0f), FLOOR}, // sud de piscina
+	  {glm::vec3(0.0f, -0.5f, -81.5f), glm::vec3(50.0f, 0.1f,  37.0f), FLOOR}, // dupa piscina
+	  {glm::vec3(0.0f, -10.0f, -47.5f), glm::vec3(24.0f, 0.1f,  31.0f), UNSAFE}, // piscina - podea ucigasa
+
+	  // === ZONA 1: Chicane + obstacole statice (vor fi mobile mai tarziu) ===
+	  {glm::vec3(-15.0f, 1.0f, -15.0f), glm::vec3(20.0f, 3.0f,   1.0f), WALL},  // chicane 1 - trecere pe dreapta
+	  {glm::vec3(15.0f, 1.0f, -27.0f), glm::vec3(20.0f, 3.0f,   1.0f), WALL},  // chicane 2 - trecere pe stanga
+	  {glm::vec3(-5.0f,  0.5f, -8.0f), glm::vec3(2.0f,  2.0f,   2.0f), UNSAFE},
+	  {glm::vec3(5.0f,  0.5f,-12.0f), glm::vec3(2.0f,  2.0f,   2.0f), UNSAFE},
+	  {glm::vec3(10.0f,  0.5f,-20.0f), glm::vec3(2.0f,  2.0f,   2.0f), UNSAFE},
+	  {glm::vec3(0.0f,  0.5f,-23.0f), glm::vec3(2.0f,  2.0f,   2.0f), UNSAFE},
+
+	  // === ZONA 2: Piscina ===
+	  {glm::vec3(-13.0f, 1.0f, -47.5f),  glm::vec3(1.0f,  3.0f,  31.0f), WALL},  // perete stanga
+	  {glm::vec3(13.0f, 1.0f, -47.5f),  glm::vec3(1.0f,  3.0f,  31.0f), WALL},  // perete dreapta
+	  {glm::vec3(-9.5f, 1.0f, -32.5f),  glm::vec3(8.0f,  3.0f,   1.0f), WALL},  // intrare - stanga
+	  {glm::vec3(9.5f, 1.0f, -32.5f),  glm::vec3(8.0f,  3.0f,   1.0f), WALL},  // intrare - dreapta
+	  {glm::vec3(-9.5f, 1.0f, -63.5f),  glm::vec3(8.0f,  3.0f,   1.0f), WALL},  // iesire - stanga
+	  {glm::vec3(9.5f, 1.0f, -63.5f),  glm::vec3(8.0f,  3.0f,   1.0f), WALL},  // iesire - dreapta
+	  // Platforme safe (verzi) - sari pe ele ca sa treci
+	  {glm::vec3(-5.0f, 0.3f, -36.0f),  glm::vec3(3.0f,  0.6f,   3.0f), SAFE},
+	  {glm::vec3(0.0f, 0.3f, -34.0f),  glm::vec3(3.0f,  0.6f,   3.0f), SAFE},
+	  {glm::vec3(4.0f, 0.3f, -41.0f),  glm::vec3(3.0f,  0.6f,   3.0f), SAFE},
+	  {glm::vec3(-6.0f, 0.3f, -46.0f),  glm::vec3(3.0f,  0.6f,   3.0f), SAFE},
+	  {glm::vec3(0.0f, 0.3f, -48.0f),  glm::vec3(3.0f,  0.6f,   3.0f), SAFE},
+	  {glm::vec3(5.0f, 0.3f, -51.0f),  glm::vec3(3.0f,  0.6f,   3.0f), SAFE},
+	  {glm::vec3(-2.0f, 0.3f, -57.0f),  glm::vec3(3.0f,  0.6f,   3.0f), SAFE},
+	  // Obstacole unsafe (rosii)
+	  {glm::vec3(5.0f, 0.5f, -37.0f),  glm::vec3(2.0f,  1.5f,   2.0f), UNSAFE},
+	  {glm::vec3(-6.0f, 0.5f, -43.0f),  glm::vec3(2.0f,  1.5f,   2.0f), UNSAFE},
+	  {glm::vec3(7.0f, 0.5f, -48.0f),  glm::vec3(2.0f,  1.5f,   2.0f), UNSAFE},
+	  {glm::vec3(-7.0f, 0.5f, -53.0f),  glm::vec3(2.0f,  1.5f,   2.0f), UNSAFE},
+	  {glm::vec3(2.0f, 0.5f, -59.0f),  glm::vec3(2.0f,  1.5f,   2.0f), UNSAFE},
+
+	  // === ZONA 3: Zigzag (trecere alternativ dreapta-stanga-dreapta) ===
+	  {glm::vec3(-5.0f, 1.0f, -71.0f),  glm::vec3(40.0f, 3.0f,   1.0f), WALL},  // trecere pe dreapta (X=15 la X=25)
+	  {glm::vec3(5.0f, 1.0f, -79.0f),  glm::vec3(40.0f, 3.0f,   1.0f), WALL},  // trecere pe stanga (X=-25 la X=-15)
+	  {glm::vec3(-5.0f, 1.0f, -87.0f),  glm::vec3(40.0f, 3.0f,   1.0f), WALL},  // trecere pe dreapta din nou
+
+	  // === PORTAL FINISH ===
+	  {glm::vec3(0.0f, 1.0f,-98.0f),  glm::vec3(8.0f,  3.0f,   0.5f), FINISH}
 };
-int nrObstacole = 2;
+int nrObstacole = sizeof(obiecte) / sizeof(obiecte[0]);
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
@@ -236,10 +289,13 @@ int main()
 		if (currentState == STATE_PLAYING)
 		{
 			float vitezaMiscarii = 0.05f;
+			prevPlayerY = playerY;
 			velocityY -= gravitate;
 			playerY += velocityY;
 
-			if (playerY <= nivelPodea)
+			bool inPiscina = (playerX > -12.0f && playerX < 12.0f && playerZ < -32.0f && playerZ > -63.0f);
+
+			if (playerY <= nivelPodea && !inPiscina)
 			{
 				velocityY = 0.0f;
 				playerY = nivelPodea;
@@ -271,7 +327,7 @@ int main()
 			}
 
 			// Limite mișcare caracter pe drum
-			if (playerX < -24.0f)
+			/*if (playerX < -24.0f)
 				playerX = -24.0f;
 			if (playerX > 24.0f)
 				playerX = 24.0f;
@@ -279,7 +335,7 @@ int main()
 			if (playerZ > 0.0f)
 				playerZ = 0.0f;
 			if (playerZ < -1000.0f)
-				playerZ = -1000.0f;
+				playerZ = -1000.0f;*/
 
 			peSuprafata = false;
 
@@ -289,9 +345,13 @@ int main()
 				float oy = obiecte[i].pozitie.y;
 				float oz = obiecte[i].pozitie.z;
 
-				bool colX = abs(playerX - ox) < 1.0f;
-				bool colY = playerY < oy + 0.5f && playerY > oy - 1.5f;
-				bool colZ = abs(playerZ - oz) < 1.0f;
+				float hx = obiecte[i].scala.x * 0.5f;
+				float hy = obiecte[i].scala.y * 0.5f;
+				float hz = obiecte[i].scala.z * 0.5f;
+
+				bool colX = abs(playerX - ox) < hx + 0.3f;
+				bool colY = playerY < oy + hy && playerY > oy - hy - 1.0f;
+				bool colZ = abs(playerZ - oz) < hz + 0.3f;
 
 				if (colX && colZ && colY)
 				{
@@ -299,26 +359,35 @@ int main()
 						currentState = STATE_GAME_OVER;
 					else if (obiecte[i].tip == SAFE)
 					{
-						if (velocityY < 0.0f && playerY >= oy)
+						if (velocityY < 0.0f && prevPlayerY >= oy + hy)
 						{
 							peSuprafata = true;
-							playerY = oy + 0.5f;
+							playerY = oy + hy;
 							velocityY = 0.0f;
 						}
 						else if (velocityY > 0.0f && playerY < oy)
 						{
-							playerY = oy - 1.5f;
+							playerY = oy - hy - 1.0f;
 							velocityY = 0.0f;
 						}
-						else
+						else 
 						{
-							float pX = 1.0f - abs(playerX - ox);
-							float pZ = 1.0f - abs(playerZ - oz);
+							float pX = hx + 0.3f - abs(playerX - ox);
+							float pZ = hz + 0.3f - abs(playerZ - oz);
 							if (pX < pZ)
-								playerX = ox + (playerX > ox ? 1.0f : -1.0f);
+								playerX = ox + (playerX > ox ? hx + 0.31f : -(hx + 0.31f));
 							else
-								playerZ = oz + (playerZ > oz ? 1.0f : -1.0f);
+								playerZ = oz + (playerZ > oz ? hz + 0.31f : -(hz + 0.31f));
 						}
+					}
+					else if (obiecte[i].tip == WALL)
+					{
+						float pX = hx + 0.3f - abs(playerX - ox);
+						float pZ = hz + 0.3f - abs(playerZ - oz);
+						if (pX < pZ)
+							playerX = ox + (playerX > ox ? hx + 0.31f : -(hx + 0.31f));
+						else
+							playerZ = oz + (playerZ > oz ? hz + 0.31f : -(hz + 0.31f));
 					}
 				}
 			}
@@ -331,24 +400,23 @@ int main()
 				}
 			}
 
-			//DRUMUL
-			glUniform3f(colorLoc, 0.4f, 0.2f, 0.0f);
-			glm::mat4 modelDrum = glm::mat4(1.0f);
-			modelDrum = glm::translate(modelDrum, glm::vec3(0.0f, -0.5f, -500.0f));
-			modelDrum = glm::scale(modelDrum, glm::vec3(50.0f, 0.1f, 1000.0f));
-			glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelDrum));
-			glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-
-			
 			for (int i = 0; i < nrObstacole; i++) 
 			{
-				if (obiecte[i].tip == UNSAFE)
+				if (obiecte[i].tip == UNSAFE) 
 					glUniform3f(colorLoc, 0.9f, 0.1f, 0.1f);
-				else
+				else if (obiecte[i].tip == SAFE)   
 					glUniform3f(colorLoc, 0.0f, 1.0f, 0.1f);
+				else if (obiecte[i].tip == WALL)   
+					glUniform3f(colorLoc, 0.7f, 0.7f, 0.7f);
+				else if (obiecte[i].tip == FLOOR) 
+					glUniform3f(colorLoc, 0.4f, 0.2f, 0.0f);
+				else if (obiecte[i].tip == FINISH) 
+					glUniform3f(colorLoc, 0.1f, 0.4f, 0.9f);
+
 				glm::mat4 modelObstacol = glm::mat4(1.0f);
 				// Aici folosim coordonatele din harta ta de sus!
 				modelObstacol = glm::translate(modelObstacol, obiecte[i].pozitie);
+				modelObstacol = glm::scale(modelObstacol, obiecte[i].scala);
 				glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(modelObstacol));
 				glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
 			}
@@ -398,7 +466,7 @@ int main()
 				playerX = 0.0f;
 				playerY = nivelPodea;
 				velocityY = 0.0f;
-				playerZ = 0.0f;
+				playerZ = -6.0f;
 			}
 		}
 		else if (currentState == STATE_GAME_OVER)
@@ -433,7 +501,7 @@ int main()
 				playerX = 0.0f;
 				playerY = nivelPodea;
 				velocityY = 0.0f;
-				playerZ = 0.0f;
+				playerZ = -3.0f;
 			}
 
 			ImGui::PopStyleColor(2);
@@ -447,7 +515,7 @@ int main()
 				playerX = 0.0f;
 				playerY = nivelPodea;
 				velocityY = 0.0f;
-				playerZ = 0.0f;
+				playerZ = -3.0f;
 			}
 		}
 		
