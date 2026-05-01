@@ -73,13 +73,15 @@ void updatePlayer(GLFWwindow* window)
 {
 	updateLevel();
 
-	float vitezaMiscarii = 0.05f;
+	float acceleratie = 0.05f;
+
 	prevPlayerY = playerY;
 	velocityY -= gravitate;
 	playerY += velocityY;
 
-	bool inPiscina = (playerX > -12.0f && playerX < 12.0f
-		           && playerZ <  -32.0f && playerZ > -63.0f);
+	bool inPiscina = (playerX > -12.0f && playerX < 12.0f && playerZ <  -32.0f && playerZ > -63.0f);
+
+	peSuprafata = false;
 
 	if (playerY <= nivelPodea && !inPiscina)
 	{
@@ -94,26 +96,30 @@ void updatePlayer(GLFWwindow* window)
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		playerX += inainte.x * vitezaMiscarii;
-		playerZ += inainte.z * vitezaMiscarii;
+		velocityX += inainte.x * acceleratie;
+		velocityZ += inainte.z * acceleratie;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		playerX -= inainte.x * vitezaMiscarii;
-		playerZ -= inainte.z * vitezaMiscarii;
+		velocityX -= inainte.x * acceleratie;
+		velocityZ -= inainte.z * acceleratie;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		playerX -= dreapta.x * vitezaMiscarii;
-		playerZ -= dreapta.z * vitezaMiscarii;
+		velocityX -= dreapta.x * acceleratie;
+		velocityZ -= dreapta.z * acceleratie;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		playerX += dreapta.x * vitezaMiscarii;
-		playerZ += dreapta.z * vitezaMiscarii;
+		velocityX += dreapta.x * acceleratie;
+		velocityZ += dreapta.z * acceleratie;
 	}
 
-	peSuprafata = false;
+	float frictiune = peSuprafata ? 0.8f : 0.7f;
+	velocityX *= frictiune;
+	velocityZ *= frictiune;
+	playerX += velocityX;
+	playerZ += velocityZ;
 
 	for (int i = 0; i < nrObstacole; i++)
 	{

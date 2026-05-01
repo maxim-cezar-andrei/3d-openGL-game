@@ -14,7 +14,9 @@ extern float playerY;
 extern float playerZ;
 
 extern float prevPlayerY;
+extern float velocityX;
 extern float velocityY;
+extern float velocityZ;
 extern float gravitate;
 extern float nivelPodea;
 
