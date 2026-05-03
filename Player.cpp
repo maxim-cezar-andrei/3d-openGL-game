@@ -17,7 +17,7 @@ float prevPlayerY = 0.0f;
 float velocityX = 0.0f;
 float velocityY = 0.0f;
 float velocityZ = 0.0f;
-float gravitate = 0.01f;
+float gravitatie = 0.01f;
 float nivelPodea = -0.45f;
 
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -76,10 +76,10 @@ void updatePlayer(GLFWwindow* window)
 	float acceleratie = 0.05f;
 
 	prevPlayerY = playerY;
-	velocityY -= gravitate;
+	velocityY -= gravitatie;
 	playerY += velocityY;
 
-	bool inPiscina = (playerX > -12.0f && playerX < 12.0f && playerZ <  -32.0f && playerZ > -63.0f);
+	bool inPiscina = (playerZ < -32.0f && playerZ > -63.0f);
 
 	peSuprafata = false;
 
@@ -115,7 +115,7 @@ void updatePlayer(GLFWwindow* window)
 		velocityZ += dreapta.z * acceleratie;
 	}
 
-	float frictiune = peSuprafata ? 0.8f : 0.7f;
+	float frictiune = peSuprafata ? 0.7f : 0.6f;
 	velocityX *= frictiune;
 	velocityZ *= frictiune;
 	playerX += velocityX;

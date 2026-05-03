@@ -111,9 +111,26 @@ int main()
 	int projLoc  = glGetUniformLocation(myShader.ID, "projection");
 	int colorLoc = glGetUniformLocation(myShader.ID, "objectColor");
 
+	bool contur = false;
+	bool debugOverlay = false;
+
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
+
+		static bool f1Inainte = false;
+		bool f1Acum = glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS;
+		if (f1Acum && !f1Inainte)
+			contur = !contur;
+		f1Inainte = f1Acum;
+
+		static bool f2Inainte = false;
+		bool f2Acum = glfwGetKey(window, GLFW_KEY_F2) == GLFW_PRESS;
+		if (f2Acum && !f2Inainte)
+			debugOverlay = !debugOverlay;
+		f2Inainte = f2Acum;
+
+		glPolygonMode(GL_FRONT_AND_BACK, contur ? GL_LINE : GL_FILL);
 
 		spaceAcum = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
 
@@ -169,6 +186,15 @@ int main()
 
 		// MENIU
 		renderMenus(window);
+
+		// DEBUG overlay
+		if (debugOverlay)
+		{
+			ImGui::SetNextWindowPos(ImVec2(10, 10));
+			ImGui::Begin("Debug", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoInputs);
+			ImGui::Text("X: %.2f  Y: %.2f  Z: %.2f", playerX, playerY, playerZ);
+			ImGui::End();
+		}
 
 		glBindVertexArray(0);
 

@@ -22,7 +22,10 @@ struct Obiect
 	glm::vec3 pozitie;
 	glm::vec3 scala;
 	TipObiect tip;
-	float vitezaX;
-	float limitaMin;
-	float limitaMax;
+	float vitezaX    = 0.0f;
+	float limitaMinX  = 0.0f;
+	float limitaMaxX  = 0.0f;
+	float vitezaZ    = 0.0f;
+	float limitaMinZ = 0.0f;
+	float limitaMaxZ = 0.0f;
 };
