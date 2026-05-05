@@ -3,4 +3,4 @@
 
 extern Obiect obiecte[];
 extern int nrObstacole;
-void updateLevel();
+void updateLevel(float dtFactor);

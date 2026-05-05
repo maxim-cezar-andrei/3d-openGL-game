@@ -107,15 +107,22 @@ int main()
 	glBindVertexArray(0);
 
 	int modelLoc = glGetUniformLocation(myShader.ID, "model");
-	int viewLoc  = glGetUniformLocation(myShader.ID, "view");
-	int projLoc  = glGetUniformLocation(myShader.ID, "projection");
+	int viewLoc = glGetUniformLocation(myShader.ID, "view");
+	int projLoc = glGetUniformLocation(myShader.ID, "projection");
 	int colorLoc = glGetUniformLocation(myShader.ID, "objectColor");
 
 	bool contur = false;
 	bool debugOverlay = false;
 
+	float lastFrame = (float)glfwGetTime();
+	float deltaTime = 0.0f;
+
 	while (!glfwWindowShouldClose(window))
 	{
+		float currentFrame = (float)glfwGetTime();
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
 		processInput(window);
 
 		static bool f1Inainte = false;
@@ -160,20 +167,20 @@ int main()
 
 		if (currentState == STATE_PLAYING)
 		{
-			updatePlayer(window);
+			updatePlayer(window, deltaTime);
 
 			// RANDARE
 			for (int i = 0; i < nrObstacole; i++)
 			{
-				if (obiecte[i].tip == UNSAFE) 
+				if (obiecte[i].tip == UNSAFE)
 					glUniform3f(colorLoc, 0.9f, 0.1f, 0.1f);
-				else if (obiecte[i].tip == SAFE)   
+				else if (obiecte[i].tip == SAFE)
 					glUniform3f(colorLoc, 0.0f, 1.0f, 0.1f);
-				else if (obiecte[i].tip == WALL)   
+				else if (obiecte[i].tip == WALL)
 					glUniform3f(colorLoc, 0.7f, 0.7f, 0.7f);
-				else if (obiecte[i].tip == FLOOR)  
+				else if (obiecte[i].tip == FLOOR)
 					glUniform3f(colorLoc, 0.4f, 0.2f, 0.0f);
-				else if (obiecte[i].tip == FINISH) 
+				else if (obiecte[i].tip == FINISH)
 					glUniform3f(colorLoc, 0.1f, 0.4f, 0.9f);
 
 				glm::mat4 modelObstacol = glm::mat4(1.0f);

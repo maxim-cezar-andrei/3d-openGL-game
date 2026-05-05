@@ -30,4 +30,4 @@ extern float lastX;
 extern float lastY;
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
-void updatePlayer(GLFWwindow* window);
+void updatePlayer(GLFWwindow* window, float deltaTime);

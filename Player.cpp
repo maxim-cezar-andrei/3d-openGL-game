@@ -5,9 +5,9 @@
 
 GameState currentState = STATE_MAIN_MENU;
 
-bool spaceAcum    = false;
+bool spaceAcum = false;
 bool spaceInainte = false;
-bool peSuprafata  = true;
+bool peSuprafata = true;
 
 float playerX = 0.0f;
 float playerY = 0.0f;
@@ -17,17 +17,17 @@ float prevPlayerY = 0.0f;
 float velocityX = 0.0f;
 float velocityY = 0.0f;
 float velocityZ = 0.0f;
-float gravitatie = 0.01f;
+float gravitatie = 0.025f;
 float nivelPodea = -0.45f;
 
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
+glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 bool  firstMouse = true;
-float yaw   = -90.0f;
-float pitch  =   0.0f;
-float lastX  = 400.0f;
-float lastY  = 300.0f;
+float yaw = -90.0f;
+float pitch = 0.0f;
+float lastX = 400.0f;
+float lastY = 300.0f;
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
@@ -54,11 +54,11 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 	xoffset *= sensibilitate;
 	yoffset *= sensibilitate;
 
-	yaw   += xoffset;
+	yaw += xoffset;
 	pitch += yoffset;
 
 	// Blocam gatul ca sa nu ne dam peste cap
-	if (pitch >  89.0f) pitch =  89.0f;
+	if (pitch > 89.0f) pitch = 89.0f;
 	if (pitch < -89.0f) pitch = -89.0f;
 
 	// Transformam unghiurile intr-un vector 3D de directie
@@ -69,15 +69,18 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 	cameraFront = glm::normalize(front);
 }
 
-void updatePlayer(GLFWwindow* window)
+void updatePlayer(GLFWwindow* window, float deltaTime)
 {
-	updateLevel();
+	// dtFactor = 1.0 la 60fps; toate valorile de viteza/acceleratie raman neschimbate
+	float dtFactor = deltaTime * 60.0f;
 
-	float acceleratie = 0.05f;
+	updateLevel(dtFactor);
+
+	float acceleratie = 0.1f;
 
 	prevPlayerY = playerY;
-	velocityY -= gravitatie;
-	playerY += velocityY;
+	velocityY -= gravitatie * dtFactor;
+	playerY += velocityY * dtFactor;
 
 	bool inPiscina = (playerZ < -32.0f && playerZ > -63.0f);
 
@@ -96,30 +99,31 @@ void updatePlayer(GLFWwindow* window)
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 	{
-		velocityX += inainte.x * acceleratie;
-		velocityZ += inainte.z * acceleratie;
+		velocityX += inainte.x * acceleratie * dtFactor;
+		velocityZ += inainte.z * acceleratie * dtFactor;
 	}
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
 	{
-		velocityX -= inainte.x * acceleratie;
-		velocityZ -= inainte.z * acceleratie;
+		velocityX -= inainte.x * acceleratie * dtFactor;
+		velocityZ -= inainte.z * acceleratie * dtFactor;
 	}
 	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
 	{
-		velocityX -= dreapta.x * acceleratie;
-		velocityZ -= dreapta.z * acceleratie;
+		velocityX -= dreapta.x * acceleratie * dtFactor;
+		velocityZ -= dreapta.z * acceleratie * dtFactor;
 	}
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 	{
-		velocityX += dreapta.x * acceleratie;
-		velocityZ += dreapta.z * acceleratie;
+		velocityX += dreapta.x * acceleratie * dtFactor;
+		velocityZ += dreapta.z * acceleratie * dtFactor;
 	}
 
+	// pow(frictiune, dtFactor) pastreaza acelasi feeling la orice FPS
 	float frictiune = peSuprafata ? 0.7f : 0.6f;
-	velocityX *= frictiune;
-	velocityZ *= frictiune;
-	playerX += velocityX;
-	playerZ += velocityZ;
+	velocityX *= pow(frictiune, dtFactor);
+	velocityZ *= pow(frictiune, dtFactor);
+	playerX += velocityX * dtFactor;
+	playerZ += velocityZ * dtFactor;
 
 	for (int i = 0; i < nrObstacole; i++)
 	{
@@ -162,9 +166,9 @@ void updatePlayer(GLFWwindow* window)
 					float pX = hx + 0.3f - abs(playerX - ox);
 					float pZ = hz + 0.3f - abs(playerZ - oz);
 					if (pX < pZ)
-						playerX = ox + (playerX > ox ?  (hx + 0.31f) : -(hx + 0.31f));
+						playerX = ox + (playerX > ox ? (hx + 0.31f) : -(hx + 0.31f));
 					else
-						playerZ = oz + (playerZ > oz ?  (hz + 0.31f) : -(hz + 0.31f));
+						playerZ = oz + (playerZ > oz ? (hz + 0.31f) : -(hz + 0.31f));
 				}
 			}
 			else if (obiecte[i].tip == WALL)
@@ -172,9 +176,9 @@ void updatePlayer(GLFWwindow* window)
 				float pX = hx + 0.3f - abs(playerX - ox);
 				float pZ = hz + 0.3f - abs(playerZ - oz);
 				if (pX < pZ)
-					playerX = ox + (playerX > ox ?  (hx + 0.31f) : -(hx + 0.31f));
+					playerX = ox + (playerX > ox ? (hx + 0.31f) : -(hx + 0.31f));
 				else
-					playerZ = oz + (playerZ > oz ?  (hz + 0.31f) : -(hz + 0.31f));
+					playerZ = oz + (playerZ > oz ? (hz + 0.31f) : -(hz + 0.31f));
 			}
 		}
 	}
