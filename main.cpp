@@ -124,7 +124,6 @@ int main()
 		lastFrame = currentFrame;
 
 		processInput(window);
-
 		static bool f1Inainte = false;
 		bool f1Acum = glfwGetKey(window, GLFW_KEY_F1) == GLFW_PRESS;
 		if (f1Acum && !f1Inainte)
