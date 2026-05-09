@@ -76,6 +76,10 @@ void renderMenus(GLFWwindow* window)
 			playerY   = nivelPodea;
 			velocityY = 0.0f;
 			playerZ   = -3.0f;
+			yaw = -90.0f;
+			pitch = 0.0f;
+			cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+			firstMouse = true;
 		}
 
 		ImGui::PopStyleColor(2);
@@ -89,6 +93,10 @@ void renderMenus(GLFWwindow* window)
 			playerY   = nivelPodea;
 			velocityY = 0.0f;
 			playerZ   = -3.0f;
+			yaw = -90.0f;
+			pitch = 0.0f;
+			cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+			firstMouse = true;
 		}
 	}
 }

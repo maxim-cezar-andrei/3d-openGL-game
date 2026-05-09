@@ -19,7 +19,7 @@ Minimalist:
 OpenGL 3.3 Core, GLFW, GLAD, GLM, ImGui, C++20
 
 ## Build
-Exclusiv **Visual Studio 2022** prin `GLRunner.slnx`. Configuratie activa: `Debug|x64`.
+Exclusiv **Visual Studio 2026** prin `GLRunner.slnx`. Configuratie activa: `Debug|x64`.
 Nu exista build pe linie de comanda.
 
 ## Structura folderelor
@@ -40,7 +40,6 @@ Comportamentul dorit:
 7. Nu rescrie portiuni mari de cod — fa modificari minime, focalizate
 
 ## Arhitectura actuala
-Tot codul de joc se afla intr-un singur fisier `main.cpp`.
 
 State machine cu 3 stari: `STATE_MAIN_MENU` → `STATE_PLAYING` → `STATE_GAME_OVER`.
 
@@ -56,8 +55,12 @@ State machine cu 3 stari: `STATE_MAIN_MENU` → `STATE_PLAYING` → `STATE_GAME_
 4. Sistem de death & respawn
 5. Spawn point per nivel
 6. Obstacole mobile (platforme miscatoare, pendule)
-7. Meniu + tranzitii intre niveluri
-8. Polish: sunet, muzica, efecte de death
+7. Aceleasi frame-uri indiferent de device
+8. Texturi
+9. Iluminare in centrul hartii 
+10. Iluminare din perspectiva observatorului
+11. Meniu + tranzitii intre niveluri
+12. Polish: sunet, muzica, efecte de death
 
 ## Decizii luate
 - Fara Bullet Physics sau alte engines — totul custom

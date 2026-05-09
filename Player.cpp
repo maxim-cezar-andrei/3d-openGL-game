@@ -180,6 +180,15 @@ void updatePlayer(GLFWwindow* window, float deltaTime)
 				else
 					playerZ = oz + (playerZ > oz ? (hz + 0.31f) : -(hz + 0.31f));
 			}
+			else if (obiecte[i].tip == FINISH)
+			{
+				velocityX = 0.0f;
+				velocityY = 0.0f;
+				velocityZ = 0.0f;
+				firstMouse = true;
+				currentState = STATE_MAIN_MENU;
+				glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			}
 		}
 	}
 

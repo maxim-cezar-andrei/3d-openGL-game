@@ -14,6 +14,8 @@
 #include "imgui/imgui_impl_glfw.h"
 #include "imgui/imgui_impl_opengl3.h"
 
+#include "stb_image.h"
+
 using namespace std;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
@@ -68,24 +70,46 @@ int main()
 
 	// Cele 8 colturi ale unui cub 3D
 	float vertices[] = {
-		 0.5f,  0.5f,  0.5f, // 0: Sus Dreapta Fata
-		 0.5f, -0.5f,  0.5f, // 1: Jos Dreapta Fata
-		-0.5f, -0.5f,  0.5f, // 2: Jos Stanga Fata
-		-0.5f,  0.5f,  0.5f, // 3: Sus Stanga Fata
-		 0.5f,  0.5f, -0.5f, // 4: Sus Dreapta Spate
-		 0.5f, -0.5f, -0.5f, // 5: Jos Dreapta Spate
-		-0.5f, -0.5f, -0.5f, // 6: Jos Stanga Spate
-		-0.5f,  0.5f, -0.5f  // 7: Sus Stanga Spate
+	  //XYZ                  //UV
+      -0.5f, -0.5f,  0.5f,   0.0f, 0.0f,
+       0.5f, -0.5f,  0.5f,   1.0f, 0.0f,
+       0.5f,  0.5f,  0.5f,   1.0f, 1.0f,
+      -0.5f,  0.5f,  0.5f,   0.0f, 1.0f,
+
+       0.5f, -0.5f, -0.5f,   0.0f, 0.0f,
+      -0.5f, -0.5f, -0.5f,   1.0f, 0.0f,
+      -0.5f,  0.5f, -0.5f,   1.0f, 1.0f,
+       0.5f,  0.5f, -0.5f,   0.0f, 1.0f,
+
+      -0.5f, -0.5f, -0.5f,   0.0f, 0.0f,
+      -0.5f, -0.5f,  0.5f,   1.0f, 0.0f,
+      -0.5f,  0.5f,  0.5f,   1.0f, 1.0f,
+      -0.5f,  0.5f, -0.5f,   0.0f, 1.0f,
+
+       0.5f, -0.5f,  0.5f,   0.0f, 0.0f,
+       0.5f, -0.5f, -0.5f,   1.0f, 0.0f,
+       0.5f,  0.5f, -0.5f,   1.0f, 1.0f,
+       0.5f,  0.5f,  0.5f,   0.0f, 1.0f,
+
+      -0.5f,  0.5f,  0.5f,   0.0f, 0.0f,
+       0.5f,  0.5f,  0.5f,   1.0f, 0.0f,
+       0.5f,  0.5f, -0.5f,   1.0f, 1.0f,
+      -0.5f,  0.5f, -0.5f,   0.0f, 1.0f,
+
+      -0.5f, -0.5f, -0.5f,   0.0f, 0.0f,
+       0.5f, -0.5f, -0.5f,   1.0f, 0.0f,
+       0.5f, -0.5f,  0.5f,   1.0f, 1.0f,
+      -0.5f, -0.5f,  0.5f,   0.0f, 1.0f,
 	};
 
 	// Cele 12 triunghiuri care formeaza fetele cubului (36 de puncte in total)
 	unsigned int indices[] = {
-		0, 1, 3, 1, 2, 3, // Fata din fata
-		4, 5, 7, 5, 6, 7, // Fata din spate
-		3, 2, 7, 2, 6, 7, // Fata din stanga
-		0, 1, 4, 1, 5, 4, // Fata din dreapta
-		0, 3, 4, 3, 7, 4, // Fata de sus
-		1, 2, 5, 2, 6, 5  // Fata de jos
+	   0,  1,  2,   0,  2,  3,  // fata din fata
+	   4,  5,  6,   4,  6,  7,  // fata din spate
+	   8,  9, 10,   8, 10, 11,  // fata din stanga
+	  12, 13, 14,  12, 14, 15,  // fata din dreapta
+	  16, 17, 18,  16, 18, 19,  // fata de sus
+	  20, 21, 22,  20, 22, 23,  // fata de jos
 	};
 
 	unsigned int VBO, VAO, EBO;
@@ -100,16 +124,64 @@ int main()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+
+	unsigned int floorTex, wallTex;
 
 	int modelLoc = glGetUniformLocation(myShader.ID, "model");
 	int viewLoc = glGetUniformLocation(myShader.ID, "view");
 	int projLoc = glGetUniformLocation(myShader.ID, "projection");
 	int colorLoc = glGetUniformLocation(myShader.ID, "objectColor");
+	int texUseLoc = glGetUniformLocation(myShader.ID, "useTexture");
+	int texLoc = glGetUniformLocation(myShader.ID, "tex");
+
+	int width, height, nrChannels;
+	stbi_set_flip_vertically_on_load(true);
+
+	glGenTextures(1, &floorTex);
+	glBindTexture(GL_TEXTURE_2D, floorTex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	unsigned char* data = stbi_load("asphalt.jpg", &width, &height, &nrChannels, 3);
+	if (data)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << stbi_failure_reason() << std::endl;
+		return -1;
+	}
+	stbi_image_free(data);
+
+	glGenTextures(1, &wallTex);
+	glBindTexture(GL_TEXTURE_2D, wallTex);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	unsigned char* data2 = stbi_load("wall.jpg", &width, &height, &nrChannels, 3);
+	if (data2)
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data2);
+		glGenerateMipmap(GL_TEXTURE_2D);
+	}
+	else
+	{
+		std::cout << "Failed to load texture" << stbi_failure_reason() << std::endl;
+		return -1;
+	}
+	stbi_image_free(data2);
 
 	bool contur = false;
 	bool debugOverlay = false;
@@ -169,18 +241,33 @@ int main()
 			updatePlayer(window, deltaTime);
 
 			// RANDARE
+			glUniform1i(texLoc, 0);
+
 			for (int i = 0; i < nrObstacole; i++)
 			{
-				if (obiecte[i].tip == UNSAFE)
-					glUniform3f(colorLoc, 0.9f, 0.1f, 0.1f);
-				else if (obiecte[i].tip == SAFE)
-					glUniform3f(colorLoc, 0.0f, 1.0f, 0.1f);
-				else if (obiecte[i].tip == WALL)
-					glUniform3f(colorLoc, 0.7f, 0.7f, 0.7f);
+				if (obiecte[i].tip == WALL)
+				{
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, wallTex);
+					glUniform1i(texUseLoc, 1);
+				}
 				else if (obiecte[i].tip == FLOOR)
-					glUniform3f(colorLoc, 0.4f, 0.2f, 0.0f);
-				else if (obiecte[i].tip == FINISH)
-					glUniform3f(colorLoc, 0.1f, 0.4f, 0.9f);
+				{
+					glActiveTexture(GL_TEXTURE0);
+					glBindTexture(GL_TEXTURE_2D, floorTex);
+					glUniform1i(texUseLoc, 1);
+				}
+				else
+				{
+					glUniform1i(texUseLoc, 0);
+
+					if (obiecte[i].tip == UNSAFE)
+						glUniform3f(colorLoc, 0.9f, 0.1f, 0.1f);
+					else if (obiecte[i].tip == SAFE)
+						glUniform3f(colorLoc, 0.0f, 1.0f, 0.1f);
+					else if (obiecte[i].tip == FINISH)
+						glUniform3f(colorLoc, 0.1f, 0.4f, 0.9f);
+				}
 
 				glm::mat4 modelObstacol = glm::mat4(1.0f);
 				modelObstacol = glm::translate(modelObstacol, obiecte[i].pozitie);
