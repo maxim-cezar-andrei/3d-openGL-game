@@ -68,38 +68,37 @@ int main()
 
 	Shader myShader("shader.vert", "shader.frag");
 
-	// Cele 8 colturi ale unui cub 3D
 	float vertices[] = {
-	  //XYZ                  //UV
-      -0.5f, -0.5f,  0.5f,   0.0f, 0.0f,
-       0.5f, -0.5f,  0.5f,   1.0f, 0.0f,
-       0.5f,  0.5f,  0.5f,   1.0f, 1.0f,
-      -0.5f,  0.5f,  0.5f,   0.0f, 1.0f,
+		//XYZ                  //NORMAL			   //UV
+		-0.5f, -0.5f,  0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,   0.0f, 0.0f, 1.0f,   1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,   0.0f, 0.0f, 1.0f,   1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 1.0f,
 
-       0.5f, -0.5f, -0.5f,   0.0f, 0.0f,
-      -0.5f, -0.5f, -0.5f,   1.0f, 0.0f,
-      -0.5f,  0.5f, -0.5f,   1.0f, 1.0f,
-       0.5f,  0.5f, -0.5f,   0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,   0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,   0.0f, 0.0f, -1.0f,  1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,   0.0f, 0.0f, -1.0f,  1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,   0.0f, 0.0f, -1.0f,  0.0f, 1.0f,
 
-      -0.5f, -0.5f, -0.5f,   0.0f, 0.0f,
-      -0.5f, -0.5f,  0.5f,   1.0f, 0.0f,
-      -0.5f,  0.5f,  0.5f,   1.0f, 1.0f,
-      -0.5f,  0.5f, -0.5f,   0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,  -1.0f, 0.0f, 0.0f,   0.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,  -1.0f, 0.0f, 0.0f,   1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,  -1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,  -1.0f, 0.0f, 0.0f,   0.0f, 1.0f,
 
-       0.5f, -0.5f,  0.5f,   0.0f, 0.0f,
-       0.5f, -0.5f, -0.5f,   1.0f, 0.0f,
-       0.5f,  0.5f, -0.5f,   1.0f, 1.0f,
-       0.5f,  0.5f,  0.5f,   0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   0.0f, 1.0f,
 
-      -0.5f,  0.5f,  0.5f,   0.0f, 0.0f,
-       0.5f,  0.5f,  0.5f,   1.0f, 0.0f,
-       0.5f,  0.5f, -0.5f,   1.0f, 1.0f,
-      -0.5f,  0.5f, -0.5f,   0.0f, 1.0f,
+		 -0.5f,  0.5f,  0.5f,   0.0f, 1.0f, 0.0f,   0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 1.0f,
+		 -0.5f,  0.5f, -0.5f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f,
 
-      -0.5f, -0.5f, -0.5f,   0.0f, 0.0f,
-       0.5f, -0.5f, -0.5f,   1.0f, 0.0f,
-       0.5f, -0.5f,  0.5f,   1.0f, 1.0f,
-      -0.5f, -0.5f,  0.5f,   0.0f, 1.0f,
+		 -0.5f, -0.5f, -0.5f,   0.0f, -1.0f, 0.0f,  0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,   0.0f, -1.0f, 0.0f,  1.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,   0.0f, -1.0f, 0.0f,  1.0f, 1.0f,
+		 -0.5f, -0.5f,  0.5f,   0.0f, -1.0f, 0.0f,  0.0f, 1.0f,
 	};
 
 	// Cele 12 triunghiuri care formeaza fetele cubului (36 de puncte in total)
@@ -124,11 +123,14 @@ int main()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	glEnableVertexAttribArray(2);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
@@ -141,6 +143,11 @@ int main()
 	int colorLoc = glGetUniformLocation(myShader.ID, "objectColor");
 	int texUseLoc = glGetUniformLocation(myShader.ID, "useTexture");
 	int texLoc = glGetUniformLocation(myShader.ID, "tex");
+
+	int lightPosLoc = glGetUniformLocation(myShader.ID, "lightPos");
+	int lightColLoc = glGetUniformLocation(myShader.ID, "lightColor");
+	int viewPosLoc = glGetUniformLocation(myShader.ID, "viewPos");
+	int viewDirLoc = glGetUniformLocation(myShader.ID, "viewDir");
 
 	int width, height, nrChannels;
 	stbi_set_flip_vertically_on_load(true);
@@ -242,6 +249,14 @@ int main()
 
 			// RANDARE
 			glUniform1i(texLoc, 0);
+
+			// Lumina centrala - la mijlocul hartii, usor ridicata
+			glUniform3f(lightPosLoc, 0.0f, 5.0f, -49.0f);
+			glUniform3f(lightColLoc, 1.0f, 1.0f, 1.0f); // lumina alba
+
+			// Flashlight - pozitia si directia jucatorului
+			glUniform3f(viewPosLoc, playerX, playerY + 1.0f, playerZ);
+			glUniform3f(viewDirLoc, cameraFront.x, cameraFront.y, cameraFront.z);
 
 			for (int i = 0; i < nrObstacole; i++)
 			{

@@ -16,7 +16,7 @@ Obiect obiecte[] = {
 	// === ZONA 1:obstacole statice (vor fi mobile mai tarziu) ===
 	//{glm::vec3(-15.0f, 1.0f, -15.0f), glm::vec3(20.0f, 3.0f, 1.0f), WALL},  // chicane 1 - trecere pe dreapta
 	//{glm::vec3( 15.0f, 1.0f, -27.0f), glm::vec3(20.0f, 3.0f, 1.0f), WALL},  // chicane 2 - trecere pe stanga
-	{glm::vec3(-5.0f,  0.5f,  -8.0f), glm::vec3(2.0f, 2.0f, 2.0f), UNSAFE, 0.1f, -24.5f, 24.5f},
+	{glm::vec3(-5.0f,  0.5f,  -8.0f), glm::vec3(2.0f, 2.0f, 2.0f), UNSAFE, 0.1f, -24.0f, 24.0f},
 	{glm::vec3(5.0f,  0.5f, -12.0f), glm::vec3(2.0f, 2.0f, 2.0f), UNSAFE, 0.03f, -20.0f, 20.0f},
 	{glm::vec3(10.0f,  0.5f, -20.0f), glm::vec3(2.0f, 2.0f, 2.0f), UNSAFE, 0.03f, -20.0f, 20.0f},
 	{glm::vec3(0.0f,  0.5f, -23.0f), glm::vec3(2.0f, 2.0f, 2.0f), UNSAFE, 0.03f, -20.0f, 20.0f},
@@ -26,10 +26,13 @@ Obiect obiecte[] = {
 	{glm::vec3(17.75f, 1.0f, -32.5f), glm::vec3(14.5f, 3.0f, 1.0f), WALL},  // intrare - dreapta
 	{glm::vec3(-17.75f, 1.0f, -63.5f), glm::vec3(14.5f, 3.0f, 1.0f), WALL},  // iesire - stanga
 	{glm::vec3(17.75f, 1.0f, -63.5f), glm::vec3(14.5f, 3.0f, 1.0f), WALL},  // iesire - dreapta
-	{glm::vec3(-10.0f, 1.0f, -47.5f), glm::vec3(1.0f, 3.0f, 31.0f), WALL},  // perete stanga piscina
-	{glm::vec3(10.0f, 1.0f, -47.5f), glm::vec3(1.0f, 3.0f, 31.0f), WALL},  // perete dreapta piscina
+	{glm::vec3(-10.0f, 1.0f, -47.5f), glm::vec3(1.0f, 5.0f, 31.0f), WALL},  // perete stanga piscina
+	{glm::vec3(10.0f, 1.0f, -47.5f), glm::vec3(1.0f, 5.0f, 31.0f), WALL},  // perete dreapta piscina
 	{glm::vec3(-19.25f, 1.0f, -63.5f), glm::vec3(11.5f, 3.0f, 1.0f), WALL},  // iesire - bloc stanga exterior
 	{glm::vec3(19.25f, 1.0f, -63.5f), glm::vec3(11.5f, 3.0f, 1.0f), WALL},  // iesire - bloc dreapta exterior
+	{glm::vec3(0.0f, 10.0f, -47.5f), glm::vec3(21.0f, 1.0f, 31.0f), FLOOR},	// plafon piscina
+	{glm::vec3(0.0f, -10.0f, -47.5f), glm::vec3(21.0f, 1.0f, 31.0f), FLOOR}, // podea piscina
+
 	// Platforme safe (verzi) - sari pe ele ca sa treci
 	{glm::vec3(-5.0f, 0.3f, -36.0f), glm::vec3(3.0f, 0.6f, 3.0f), SAFE},
 	{glm::vec3(0.0f, 0.3f, -34.0f), glm::vec3(3.0f, 0.6f, 3.0f), SAFE},

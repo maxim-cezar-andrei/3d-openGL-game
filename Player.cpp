@@ -166,9 +166,9 @@ void updatePlayer(GLFWwindow* window, float deltaTime)
 					float pX = hx + 0.3f - abs(playerX - ox);
 					float pZ = hz + 0.3f - abs(playerZ - oz);
 					if (pX < pZ)
-						playerX = ox + (playerX > ox ? (hx + 0.31f) : -(hx + 0.31f));
+						playerX = ox + (playerX > ox ? (hx + 0.3f) : -(hx + 0.3f));
 					else
-						playerZ = oz + (playerZ > oz ? (hz + 0.31f) : -(hz + 0.31f));
+						playerZ = oz + (playerZ > oz ? (hz + 0.3f) : -(hz + 0.3f));
 				}
 			}
 			else if (obiecte[i].tip == WALL)
@@ -176,9 +176,9 @@ void updatePlayer(GLFWwindow* window, float deltaTime)
 				float pX = hx + 0.3f - abs(playerX - ox);
 				float pZ = hz + 0.3f - abs(playerZ - oz);
 				if (pX < pZ)
-					playerX = ox + (playerX > ox ? (hx + 0.31f) : -(hx + 0.31f));
+					playerX = ox + (playerX > ox ? (hx + 0.3f) : -(hx + 0.3f));
 				else
-					playerZ = oz + (playerZ > oz ? (hz + 0.31f) : -(hz + 0.31f));
+					playerZ = oz + (playerZ > oz ? (hz + 0.3f) : -(hz + 0.3f));
 			}
 			else if (obiecte[i].tip == FINISH)
 			{
