@@ -31,7 +31,6 @@ float lastY = 300.0f;
 
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 {
-	// Daca suntem in meniu, lasam mouse-ul in pace (ca sa poti da click pe ImGui)
 	if (currentState != STATE_PLAYING)
 		return;
 
@@ -46,7 +45,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 	}
 
 	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // Inversat: y scade de sus in jos pe ecran
+	float yoffset = lastY - ypos; 
 	lastX = xpos;
 	lastY = ypos;
 
@@ -57,11 +56,11 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 	yaw += xoffset;
 	pitch += yoffset;
 
-	// Blocam gatul ca sa nu ne dam peste cap
-	if (pitch > 89.0f) pitch = 89.0f;
-	if (pitch < -89.0f) pitch = -89.0f;
+	if (pitch > 89.0f) 
+		pitch = 89.0f;
+	if (pitch < -89.0f) 
+		pitch = -89.0f;
 
-	// Transformam unghiurile intr-un vector 3D de directie
 	glm::vec3 front;
 	front.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
 	front.y = sin(glm::radians(pitch));
@@ -71,7 +70,7 @@ void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 
 void updatePlayer(GLFWwindow* window, float deltaTime)
 {
-	// dtFactor = 1.0 la 60fps; toate valorile de viteza/acceleratie raman neschimbate
+	// dtFactor = 1.0 la 60fps
 	float dtFactor = deltaTime * 60.0f;
 
 	updateLevel(dtFactor);
@@ -118,7 +117,6 @@ void updatePlayer(GLFWwindow* window, float deltaTime)
 		velocityZ += dreapta.z * acceleratie * dtFactor;
 	}
 
-	// pow(frictiune, dtFactor) pastreaza acelasi feeling la orice FPS
 	float frictiune = peSuprafata ? 0.7f : 0.6f;
 	velocityX *= pow(frictiune, dtFactor);
 	velocityZ *= pow(frictiune, dtFactor);

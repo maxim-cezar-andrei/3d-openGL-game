@@ -59,8 +59,7 @@ State machine cu 3 stari: `STATE_MAIN_MENU` → `STATE_PLAYING` → `STATE_GAME_
 8. Texturi
 9. Iluminare in centrul hartii 
 10. Iluminare din perspectiva observatorului
-11. Meniu + tranzitii intre niveluri
-12. Polish: sunet, muzica, efecte de death
+11. Meniu
 
 ## Decizii luate
 - Fara Bullet Physics sau alte engines — totul custom

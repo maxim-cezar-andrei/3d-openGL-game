@@ -70,10 +70,10 @@ int main()
 
 	float vertices[] = {
 		//XYZ                  //NORMAL			   //UV
-		-0.5f, -0.5f,  0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,   0.0f, 0.0f, 1.0f,   1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,   0.0f, 0.0f, 1.0f,   1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
+		 0.5f, -0.5f, 0.5f,   0.0f, 0.0f, 1.0f,   1.0f, 0.0f,
+		 0.5f, 0.5f, 0.5f,    0.0f, 0.0f, 1.0f,   1.0f, 1.0f,
+		-0.5f, 0.5f, 0.5f,    0.0f, 0.0f, 1.0f,   0.0f, 1.0f,
 
 		 0.5f, -0.5f, -0.5f,   0.0f, 0.0f, -1.0f,  0.0f, 0.0f,
 		-0.5f, -0.5f, -0.5f,   0.0f, 0.0f, -1.0f,  1.0f, 0.0f,
@@ -250,11 +250,11 @@ int main()
 			// RANDARE
 			glUniform1i(texLoc, 0);
 
-			// Lumina centrala - la mijlocul hartii, usor ridicata
+			// Lumina centrala
 			glUniform3f(lightPosLoc, 0.0f, 5.0f, -49.0f);
-			glUniform3f(lightColLoc, 1.0f, 1.0f, 1.0f); // lumina alba
+			glUniform3f(lightColLoc, 1.0f, 1.0f, 1.0f); 
 
-			// Flashlight - pozitia si directia jucatorului
+			// Flashlight 
 			glUniform3f(viewPosLoc, playerX, playerY + 1.0f, playerZ);
 			glUniform3f(viewDirLoc, cameraFront.x, cameraFront.y, cameraFront.z);
 
@@ -292,7 +292,6 @@ int main()
 			}
 		}
 
-		// MENIU
 		renderMenus(window);
 
 		// DEBUG overlay

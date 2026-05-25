@@ -25,14 +25,14 @@ void main()
     vec3 lightDir = normalize(lightPos - FragPos);
     float diff = max(dot(norm, lightDir), 0.0);
     float dist = length(lightPos - FragPos);
-    float aten = 1.0 / (1.0 + 0.01 * dist + 0.002 * dist * dist); // slabeste cu distanta
+    float aten = 1.0 / (1.0 + 0.01 * dist + 0.002 * dist * dist); 
     vec3 diffuse = diff * aten * lightColor;
 
     vec3 centerLight = (ambient + diffuse) * culoare;
     
     vec3 dirFlash = normalize(viewPos - FragPos);
-    float theta   = dot(dirFlash, normalize(-viewDir));
-    float cutoff  = cos(radians(30.0)); // conul de lumina - 30 grade
+    float theta = dot(dirFlash, normalize(-viewDir));
+    float cutoff = cos(radians(30.0)); // conul de lumina - 30 grade
 
     vec3 flash = vec3(0.0);
     if (theta > cutoff)

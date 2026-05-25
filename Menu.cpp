@@ -24,13 +24,16 @@ void renderMenus(GLFWwindow* window)
 
 		ImGui::SetCursorPos(ImVec2(windowWidth * 0.05f, windowHeight * 0.8f));
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.8f, 0.0f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_Text,   ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
 
 		float btnWidth = windowWidth * 0.2f;
-		ImGui::Button("STATS",      ImVec2(btnWidth, 60)); ImGui::SameLine();
-		ImGui::Button("SETTINGS",   ImVec2(btnWidth, 60)); ImGui::SameLine();
-		ImGui::Button("CHALLENGES", ImVec2(btnWidth, 60)); ImGui::SameLine();
-		ImGui::Button("ABILITIES",  ImVec2(btnWidth, 60));
+		ImGui::Button("STATS", ImVec2(btnWidth, 60)); 
+			ImGui::SameLine();
+		ImGui::Button("SETTINGS", ImVec2(btnWidth, 60)); 
+			ImGui::SameLine();
+		ImGui::Button("CHALLENGES", ImVec2(btnWidth, 60)); 
+			ImGui::SameLine();
+		ImGui::Button("ABILITIES", ImVec2(btnWidth, 60));
 
 		ImGui::PopStyleColor(2);
 		ImGui::End();
@@ -39,10 +42,10 @@ void renderMenus(GLFWwindow* window)
 		{
 			currentState = STATE_PLAYING;
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-			playerX   = 0.0f;
-			playerY   = nivelPodea;
+			playerX = 0.0f;
+			playerY = nivelPodea;
 			velocityY = 0.0f;
-			playerZ   = -3.0f;
+			playerZ = -3.0f;
 		}
 	}
 	else if (currentState == STATE_GAME_OVER)
@@ -59,7 +62,7 @@ void renderMenus(GLFWwindow* window)
 		ImGui::Text("PRESS R TO RESTART");
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 0.8f, 0.0f, 1.0f));
-		ImGui::PushStyleColor(ImGuiCol_Text,   ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+		ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
 
 		float btnWidth = windowWidth * 0.3f;
 		ImGui::SetCursorPos(ImVec2((windowWidth * 0.5f) - btnWidth - 20, windowHeight * 0.7f));
@@ -72,10 +75,10 @@ void renderMenus(GLFWwindow* window)
 		if (ImGui::Button("RUN AGAIN", ImVec2(btnWidth, 60)))
 		{
 			currentState = STATE_PLAYING;
-			playerX   = 0.0f;
-			playerY   = nivelPodea;
+			playerX = 0.0f;
+			playerY = nivelPodea;
 			velocityY = 0.0f;
-			playerZ   = -3.0f;
+			playerZ = -3.0f;
 			yaw = -90.0f;
 			pitch = 0.0f;
 			cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
@@ -89,10 +92,10 @@ void renderMenus(GLFWwindow* window)
 		{
 			currentState = STATE_PLAYING;
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-			playerX   = 0.0f;
-			playerY   = nivelPodea;
+			playerX = 0.0f;
+			playerY = nivelPodea;
 			velocityY = 0.0f;
-			playerZ   = -3.0f;
+			playerZ = -3.0f;
 			yaw = -90.0f;
 			pitch = 0.0f;
 			cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
